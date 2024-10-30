@@ -1,9 +1,10 @@
 package test_models;
 
 import com.artemhodas.aston.rest_service.models.Bank;
-import junit.framework.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BankTest {
     private Bank bank;
@@ -14,7 +15,17 @@ public class BankTest {
     }
 
     @Test
-    public void testGetIdBank(){
-        Assert.assertEquals("Example Bank",bank.getName());
+    public void testGetIdBank() {
+        assertEquals(1, bank.getIdBank());
+    }
+
+    @Test
+    public void testGetNameBank() {
+        assertEquals("Example Bank", bank.getName());
+    }
+
+    @Test
+    public void testGetLocation() {
+        assertEquals("New York", bank.getLocation());
     }
 }
