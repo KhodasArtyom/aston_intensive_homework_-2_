@@ -5,8 +5,7 @@ import com.artemhodas.aston.rest_service.models.Client;
 import com.artemhodas.aston.rest_service.service.ClientService;
 import com.artemhodas.aston.rest_service.service.ClientServiceImpl;
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,8 +22,6 @@ public class ClientServlet extends HttpServlet {
     private final Gson gson;
 
 
-
-
     public ClientServlet() {
         this.clientService = new ClientServiceImpl(new ClientDaoImpl());
         this.gson = new Gson();
@@ -33,7 +30,18 @@ public class ClientServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Client client = new Gson().fromJson(req.getReader(),Client.class);
+
+        try{clientService.updateClient(client);
+            resp.setStatus(HttpServletResponse.SC_OK);
+        } catch (RuntimeException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         resp.setContentType("application/json");
         PrintWriter out = resp.getWriter();
 
@@ -48,7 +56,23 @@ public class ClientServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
+        String idParam = req.getParameter("id");
+        if (idParam != null) {
+            int id = Integer.parseInt(idParam);
+            try {
+                clientService.deleteClient(id);
+                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            } catch (RuntimeException e) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+        } else {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID не указан");
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         String action = req.getParameter("actions");
         resp.setContentType("application/json");
         PrintWriter out = resp.getWriter();

@@ -5,9 +5,6 @@ import com.artemhodas.aston.rest_service.models.Bank;
 import com.artemhodas.aston.rest_service.service.BankService;
 import com.artemhodas.aston.rest_service.service.BankServiceImpl;
 import com.google.gson.Gson;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +25,7 @@ public class BankServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         resp.setContentType("application/json");
         PrintWriter out = resp.getWriter();
 
@@ -45,7 +42,7 @@ public class BankServlet extends HttpServlet {
     }
 
     @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         String idParam = req.getParameter("id");
         if (idParam != null) {
             int id = Integer.parseInt(idParam);
@@ -61,7 +58,7 @@ public class BankServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         Bank bank = new Gson().fromJson(req.getReader(), Bank.class);
         try {
             bankService.updateBank(bank);
@@ -73,7 +70,7 @@ public class BankServlet extends HttpServlet {
 
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws  IOException {
         String action = req.getParameter("action");
         resp.setContentType("application/json");
         PrintWriter out = resp.getWriter();
