@@ -14,4 +14,14 @@
     <servlet-name>BankServlet</servlet-name>
     <url-pattern>/banks*/</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>ClientServlet</servlet-name>
+    <servlet-class>com.artemhodas.aston.rest_service.controllers.ClientServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>ClientServlet</servlet-name>
+    <url-pattern>/clients*/</url-pattern>
+  </servlet-mapping>
 </web-app>

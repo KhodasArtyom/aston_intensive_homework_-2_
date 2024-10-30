@@ -58,27 +58,33 @@ public class ClientDaoImpl implements ClientDao {
                 WHERE id_client= ?
                 """;
         try (Connection connection = ConnectionManager.open();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
-            {
-                if (resultSet.next()) {
-                    int clientId = resultSet.getInt("id_client");
-                    String firstName = resultSet.getString("first_name");
-                    String lastName = resultSet.getString("last_name");
-                    int bankId = resultSet.getInt("fk_bank_id");
-                    Bank bank = new Bank(bankId, null, null);
-                    return new Client(clientId, firstName, lastName, bank);
+            try {
+                ResultSet resultSet = statement.executeQuery();
 
+                {
+                    if (resultSet.next()) {
+                        int clientId = resultSet.getInt("id_client");
+                        String firstName = resultSet.getString("first_name");
+                        String lastName = resultSet.getString("last_name");
+                        int bankId = resultSet.getInt("fk_bank_id");
+                        Bank bank = new Bank(bankId, null, null);
+                        return new Client(clientId, firstName, lastName, bank);
+
+                    }
                 }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
-    @Override
+        @Override
     public void updateClient(Client client) {
         String sql = """
                 UPDATE clients SET first_name=?,last_name=?,fk_bank_id=?

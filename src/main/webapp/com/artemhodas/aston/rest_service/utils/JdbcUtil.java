@@ -20,8 +20,10 @@ public class JdbcUtil {
 //        BankService service = new BankServiceImpl(bankDao);
 //        service.updateBank(bank);
         ClientDao clientDao = new ClientDaoImpl();
-        List<Client> clients = clientDao.showAllClients();
-        System.out.println(clients);
+//        Client clientById = clientDao.getClientById(1);
+//        System.out.println(clientById);
+        Client client = new Client(4,"Nikita","Baranov",new Bank(1,null,null));
+        clientDao.saveClient(client);
 
 //        //bankDao.saveBank(bank);
 //        System.out.println(bankDao.getBankyId(2));
