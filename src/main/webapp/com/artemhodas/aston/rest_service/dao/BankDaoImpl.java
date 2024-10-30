@@ -62,6 +62,10 @@ public class BankDaoImpl implements BankDao {
             statement.setString(1, bank.getName());
             statement.setString(2, bank.getLocation());
             statement.setInt(3, bank.getIdBank());
+            int rowsUpdated = statement.executeUpdate();
+            if(rowsUpdated==0){
+                throw new RuntimeException();
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

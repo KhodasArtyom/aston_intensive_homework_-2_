@@ -5,6 +5,8 @@ import com.artemhodas.aston.rest_service.models.Bank;
 import com.artemhodas.aston.rest_service.service.BankService;
 import com.artemhodas.aston.rest_service.service.BankServiceImpl;
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -27,8 +29,48 @@ public class BankServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("application/json");
+        PrintWriter out = resp.getWriter();
 
+        try {
+            Bank bank = gson.fromJson(req.getReader(), Bank.class);
+            bankService.saveBank(bank);
+            out.print(gson.toJson(bank));
+
+        } catch (Exception e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.print(gson.toJson("Error " + e.getMessage()));
+
+        }
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String idParam = req.getParameter("id");
+        if (idParam != null) {
+            int id = Integer.parseInt(idParam);
+            try {
+                bankService.deleteBank(id);
+                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            } catch (RuntimeException e) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+        } else {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID не указан");
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Bank bank = new Gson().fromJson(req.getReader(), Bank.class);
+        try {
+            bankService.updateBank(bank);
+            resp.setStatus(HttpServletResponse.SC_OK);
+        } catch (RuntimeException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -53,6 +95,8 @@ public class BankServlet extends HttpServlet {
         } finally {
             out.flush();
         }
+
+
 
 
     }
