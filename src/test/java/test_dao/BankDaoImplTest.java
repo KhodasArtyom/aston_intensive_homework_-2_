@@ -16,8 +16,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class BankDaoImplTest {
 
@@ -56,5 +55,26 @@ public class BankDaoImplTest {
 
         }
 
+    }
+
+    @Test
+    public void testSaveBank() throws SQLException {
+        Bank bank = new Bank(1, "Test Bank", "Test Location");
+
+        try (MockedStatic<ConnectionManager> mockedConnectionManager = Mockito.mockStatic(ConnectionManager.class)) {
+
+            Connection mockConnection = mock(Connection.class);
+            PreparedStatement mockPreparedStatement = mock(PreparedStatement.class);
+
+            mockedConnectionManager.when(ConnectionManager::open).thenReturn(mockConnection);
+            when(mockConnection.prepareStatement(any(String.class))).thenReturn(mockPreparedStatement);
+
+            bankDao.saveBank(bank);
+
+            verify(mockPreparedStatement).setLong(1, bank.getIdBank());
+            verify(mockPreparedStatement).setString(2, bank.getName());
+            verify(mockPreparedStatement).setString(3, bank.getLocation());
+            verify(mockPreparedStatement).executeUpdate();
+        }
     }
 }
