@@ -77,4 +77,25 @@ public class BankDaoImplTest {
             verify(mockPreparedStatement).executeUpdate();
         }
     }
+
+    @Test
+    public void testDeleteBank() throws SQLException {
+        int bankId = 1;
+
+        try (MockedStatic<ConnectionManager> mockedConnectionManager = Mockito.mockStatic(ConnectionManager.class)) {
+
+            Connection mockConnection = mock(Connection.class);
+            PreparedStatement mockStatement = mock(PreparedStatement.class);
+
+            mockedConnectionManager.when(ConnectionManager::open).thenReturn(mockConnection);
+            when(mockConnection.prepareStatement(any(String.class))).thenReturn(mockStatement);
+            when(mockStatement.executeUpdate()).thenReturn(1);
+
+            bankDao.deleteBank(bankId);
+
+            verify(mockStatement).setInt(1, bankId);
+            verify(mockStatement).executeUpdate();
+
+        }
+    }
 }
